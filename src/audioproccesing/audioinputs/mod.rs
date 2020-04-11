@@ -1,8 +1,8 @@
 use cpal;
 use cpal::traits::*;
 
+/// Enumerate all available input formats
 pub fn list_inputs() {
-    // enumerate all available input formats
     let device = cpal::default_host().default_input_device()
         .expect("no input device found");
 
@@ -13,8 +13,8 @@ pub fn list_inputs() {
     }
 }
 
+/// Get the result of available hosts and then list them. 
 pub fn list_hosts(){
-    // Get the result of available hosts and then list them. 
     let string_of_hosts: Vec<_> = cpal::available_hosts()
     .into_iter()  
     .collect();
