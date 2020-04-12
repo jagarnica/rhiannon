@@ -1,3 +1,4 @@
+#![allow(unused)] // don't warn on unused things
 use cpal;
 use cpal::traits::*;
 
