@@ -1,1 +1,1 @@
-pub mod audioinputs;
+pub mod inputs;

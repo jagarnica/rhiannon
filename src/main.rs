@@ -6,6 +6,6 @@ mod audioproccesing;
 
 fn main() {
     // enumerate all available input formats
-    audioproccesing::audioinputs::list_inputs();
-    audioproccesing::audioinputs::list_hosts();
+    audioproccesing::inputs::list_inputs();
+    audioproccesing::inputs::list_hosts();
 }
