@@ -9,3 +9,8 @@ edition = "2018"
 [dependencies]
 cpal = "0.11.0" # Low-level cross-platform audio I/O library in pure Rust.
 
+# A Rust library for the Discord API
+[dependencies.serenity]
+version = "0.8.3"
+features = ["voice", "builder", "client", "framework", "gateway",
+            "http", "model", "standard_framework", "utils", "rustls_backend"]
