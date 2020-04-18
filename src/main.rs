@@ -8,4 +8,5 @@ fn main() {
     // enumerate all available input formats
     audioproccesing::audioinputs::list_inputs();
     audioproccesing::audioinputs::list_hosts();
+    audioproccesing::audioinputs::list_default_device();
 }
