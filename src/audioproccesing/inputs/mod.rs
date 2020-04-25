@@ -1,8 +1,8 @@
 use cpal;
 use cpal::traits::*;
 use anyhow;
-/// Enumerate all available input formats
-pub fn list_inputs() {
+/// Enumerate all available input formats for the default device 
+pub fn list_default_input_formats() {
     let device = cpal::default_host().default_input_device()
         .expect("no input device found");
 
@@ -20,6 +20,7 @@ pub fn list_hosts(){
     .collect();
     println!("Hosts Found: {:?}", string_of_hosts);
 }
+
 
 
 pub fn list_default_device() -> Result<(), anyhow::Error> {
