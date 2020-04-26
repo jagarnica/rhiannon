@@ -10,3 +10,4 @@ edition = "2018"
 cpal = "0.11.0" # Low-level cross-platform audio I/O library in pure Rust.
 anyhow = "1.0.12" # A trait object based error type for easy idiomatic error handling in Rust applications.
 hound = "3.4" # A wav encoding and decoding library in Rust.
+ringbuf = "0.2.1" # Lock-free single-producer single-consumer (SPSC) FIFO ring buffer with direct access to inner data.
