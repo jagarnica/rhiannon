@@ -13,8 +13,10 @@ use serenity::{
 
 use cpal;
 use cpal::traits::*;
+
 mod audioproccesing;
 
+/// Serenity Handle
 struct Handler;
 
 impl EventHandler for Handler {
@@ -32,15 +34,15 @@ impl EventHandler for Handler {
 }
 
 fn main() {
-    let token = env::var("DISCORD_TOKEN").expect("No discord token found!");
+    let discord_token = env::var("DISCORD_TOKEN").expect("No discord token found!");
 
-    let mut client = Client::new(&token, Handler).expect("Error creating client");
+    let mut client = Client::new(&discord_token, Handler).expect("Error creating client");
 
     if let Err(why) = client.start() {
         println!("Client error: {}", why);
     }
 
-    // // enumerate all available input formats
-    // audioproccesing::inputs::list_inputs();
-    // audioproccesing::inputs::list_hosts();
+    // enumerate all available input formats
+    audioproccesing::inputs::enumerate_device_info();
+   
 }
