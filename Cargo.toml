@@ -7,6 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rodio = "0.11.0"
 cpal = "0.11.0" # Low-level cross-platform audio I/O library in pure Rust.
 anyhow = "1.0.12" # A trait object based error type for easy idiomatic error handling in Rust applications.
 hound = "3.4" # A wav encoding and decoding library in Rust.
+ringbuf = "0.2.1" # Lock-free single-producer single-consumer (SPSC) FIFO ring buffer with direct access to inner data.

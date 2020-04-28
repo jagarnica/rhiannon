@@ -1,13 +1,15 @@
-use cpal;
-use cpal::traits::*;
-use anyhow;
-/// Enumerate all available input formats for the default device 
-pub fn list_default_input_formats() {
-    let device = cpal::default_host().default_input_device()
-        .expect("no input device found");
 
-    if let Ok(mut fmt_range) = device.supported_input_formats() {
-        while let Some(fmt) = fmt_range.next() {
+use cpal::*;
+use cpal::traits::*;
+use rodio::*;
+use anyhow;
+use ringbuf::RingBuffer;
+/// prints a list of the accepted input formats for the default device
+pub fn list_default_input_formats() {
+    let input_device = rodio::default_input_device().unwrap();
+    println!("Default input formats for device : {:?}",input_device.name());
+    if let Ok(mut fmt_range) = input_device.supported_input_formats() {
+        while let Some(fmt) = fmt_range.next(){
             println!("{:?}", fmt);
         }
     }
@@ -22,15 +24,10 @@ pub fn list_hosts(){
 }
 
 
-
-pub fn list_default_device() -> Result<(), anyhow::Error> {
-    let host = cpal::default_host();
-
-    // Setup the default input device and stream with the default input config.
-    let device = host
-        .default_input_device()
-        .expect("Failed to get default input device");
-    println!("Default input device: {}", device.name()?);
+//* Prints out the the name of the default output device. 
+pub fn list_default_output_device() -> Result<(), anyhow::Error> {
+    let default_device = rodio::default_output_device().expect("No default output device found.");
+    println!("Default output device: {:?}", default_device.name()?);
     Ok(())
 }
 
@@ -98,6 +95,17 @@ pub fn enumerate_device_info() -> Result<(), anyhow::Error>{
                 }
             }
         }
+    }
+
+    Ok(())
+}
+
+/// Prints out a list of possible devices found on the current default host 
+pub fn list_available_devices() -> Result<(), anyhow::Error>{
+    let devices = rodio::devices()?;
+    print!("  Devices: \n");
+    for (device_index, device) in devices.enumerate() {
+        println!("  {}. \"{}\"", device_index + 1, device.name()?);
     }
 
     Ok(())
