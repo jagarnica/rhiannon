@@ -13,6 +13,5 @@ fn main() {
     audioproccesing::inputs::list_default_output_device();
 
     audioproccesing::inputs::list_hosts();
-    
-   
 }
+
