@@ -31,7 +31,7 @@ pub fn list_default_output_device() -> Result<(), anyhow::Error> {
     Ok(())
 }
 
-pub fn enumerate_device_info() -> Result<(), anyhow::Error>{
+pub fn enumerate_device_info() -> Result<(), anyhow::Error> {
     println!("Supported hosts:\n  {:?}", cpal::ALL_HOSTS);
     let available_hosts = cpal::available_hosts();
     println!("Available hosts:\n  {:?}", available_hosts);
@@ -101,7 +101,7 @@ pub fn enumerate_device_info() -> Result<(), anyhow::Error>{
 }
 
 /// Prints out a list of possible devices found on the current default host 
-pub fn list_available_devices() -> Result<(), anyhow::Error>{
+pub fn list_available_devices() -> Result<(), anyhow::Error> {
     let devices = rodio::devices()?;
     print!("  Devices: \n");
     for (device_index, device) in devices.enumerate() {
