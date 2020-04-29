@@ -21,10 +21,11 @@ struct Handler;
 
 impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
+        println!("Received msg: {:#?}", msg);
         if msg.content == "!ping" {
-            if let Err(why) = msg.channel_id.say(&ctx.http, "pong!") {
-                println!("Send error: {}", why);
-            }
+            msg.channel_id
+                .say(&ctx.http, "pong!")
+                .map_err(|why| println!("Send error: {:#?}", why));
         }
     }
 
@@ -44,5 +45,5 @@ fn main() {
 
     // enumerate all available input formats
     audioproccesing::inputs::enumerate_device_info();
-   
+
 }
