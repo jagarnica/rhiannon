@@ -23,8 +23,8 @@ impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
         println!("Received msg: {:#?}", msg);
         if msg.content == "!ping" {
-            msg.channel_id
-                .say(&ctx.http, "pong!")
+            // msg.channel_id
+            msg.reply(&ctx.http, "pong!")
                 .map_err(|why| println!("Send error: {:#?}", why));
         }
     }
