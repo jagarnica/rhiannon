@@ -3,6 +3,7 @@ use cpal::*;
 use cpal::traits::*;
 use rodio::*;
 use anyhow;
+use std::io;
 use portaudio as pa;
 use ringbuf::RingBuffer;
 /// prints a list of the accepted input formats for the default device
@@ -27,8 +28,11 @@ pub fn list_hosts(){
 
 //* Prints out the the name of the default output device. 
 pub fn list_default_output_device() -> Result<(), anyhow::Error> {
-    let default_device = rodio::default_output_device().expect("No default output device found.");
-    println!("Default output device: {:?}", default_device.name()?);
+    let pa = pa::PortAudio::new()?;
+    let default_output = pa.default_output_device()?;
+    let output_info = pa.device_info(default_output)?;
+    println!("Default output device info: {:#?}", &output_info);
+
     Ok(())
 }
 
@@ -103,6 +107,7 @@ pub fn enumerate_device_info() -> Result<(), anyhow::Error> {
 
 /// Prints out a list of possible devices found on the current default host 
 pub fn list_available_devices() -> Result<(), anyhow::Error> {
+    
     let devices = rodio::devices()?;
     print!("  Devices: \n");
     for (device_index, device) in devices.enumerate() {
@@ -111,10 +116,20 @@ pub fn list_available_devices() -> Result<(), anyhow::Error> {
 
     Ok(())
 }
+//* Prints out the default input device found
+pub fn list_default_input_device() -> Result<(), anyhow::Error>{
+    
+    let pa = pa::PortAudio::new()?;
+    let default_input = pa.default_input_device()?;
+    let input_info = pa.device_info(default_input)?;
+    println!("Default input device info: {:#?}", &input_info);
+
+    Ok(())
+}
 
 pub fn feedback() -> Result<(), anyhow::Error>{
     let sample_rate: f64 = 44_100.0;
-    let FRAMES: u32 = 128;
+    let FRAMES: u32 = 2048;
     let channels: i32 = 2;
     let interleaved: bool = true;
 
@@ -135,8 +150,8 @@ pub fn feedback() -> Result<(), anyhow::Error>{
     println!("Default input device info: {:#?}", &input_info);
 
     // Construct the input stream parameters.
-    let latency = input_info.default_high_input_latency;
-    let input_params = pa::StreamParameters::<f32>::new(def_input, 1, interleaved, latency);
+    let latency = input_info.default_low_input_latency;
+    let input_params = pa::StreamParameters::<f32>::new(def_input, channels, interleaved, latency);
   
     let def_output = pa.default_output_device()?;
     let output_info = pa.device_info(def_output)?;
@@ -152,11 +167,9 @@ pub fn feedback() -> Result<(), anyhow::Error>{
     let settings = pa::DuplexStreamSettings::new(input_params, output_params, sample_rate, FRAMES);
 
     // Once the countdown reaches 0 we'll close the stream.
-    let mut count_down = 13.0;
-
-    // Keep track of the last `current_time` so we can calculate the delta time.
-    let mut maybe_last_time = None;
-
+    let mut count_down = 3.00;
+    let mut user_input = String::new();
+   
     // We'll use this channel to send the count_down to the main thread for fun.
     let (sender, receiver) = ::std::sync::mpsc::channel();
 
@@ -168,11 +181,6 @@ pub fn feedback() -> Result<(), anyhow::Error>{
                              time,
                              ..
                          }| {
-        let current_time = time.current;
-        let prev_time = maybe_last_time.unwrap_or(current_time);
-        let dt = current_time - prev_time;
-        count_down -= dt;
-        maybe_last_time = Some(current_time);
 
         assert!(frames == FRAMES as usize);
         sender.send(count_down).ok();
@@ -191,15 +199,27 @@ pub fn feedback() -> Result<(), anyhow::Error>{
 
     // Construct a stream with input and output sample types of f32.
     let mut stream = pa.open_non_blocking_stream(settings, callback)?;
-
+    println!("Type ''stop'' in order to cancel");
     stream.start()?;
 
     // Loop while the non-blocking stream is active.
-    println!("Listening...");
+   
     while let true = stream.is_active()? {
         // Do some stuff!
         while let Ok(count_down) = receiver.try_recv() {
-         //   println!("Listening... {:?}", count_down);
+          
+
+            io::stdin()
+                .read_line(&mut user_input)
+                .expect("Failed to read input");
+
+            if user_input.trim().matches("stop") {
+                println!("Exiting...");
+            } else {
+                // reset user input 
+                user_input ="".to_string();
+            }
+         
         }
     }
 
