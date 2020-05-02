@@ -1,48 +1,23 @@
 #![allow(unused)] // don't warn on unused things
 use std::env;
 
-use serenity::{
-    self,
-    prelude::*,
-    Client,
-    model::{
-        channel::Message,
-        gateway::Ready
-    },
-};
-
 use cpal;
 use cpal::traits::*;
+use serenity;
 
 mod audioproccesing;
+mod discord;
+use discord::*;
 
-/// Serenity Handle
-struct Handler;
-
-impl EventHandler for Handler {
-    fn message(&self, ctx: Context, msg: Message) {
-        if msg.content == "!ping" {
-            if let Err(why) = msg.channel_id.say(&ctx.http, "pong!") {
-                println!("Send error: {}", why);
-            }
-        }
-    }
-
-    fn ready(&self, _: Context, ready: Ready) {
-        println!("{} is connected. \nData: {:#?}", ready.user.name, ready);
-    }
-}
 
 fn main() {
     let discord_token = env::var("DISCORD_TOKEN").expect("No discord token found!");
+    let mut discord   = Discord::new(&discord_token);
 
-    let mut client = Client::new(&discord_token, Handler).expect("Error creating client");
-
-    if let Err(why) = client.start() {
+    if let Err(why) = discord.start() {
         println!("Client error: {}", why);
     }
 
     // enumerate all available input formats
     audioproccesing::inputs::enumerate_device_info();
-   
 }
