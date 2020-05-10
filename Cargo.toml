@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+regex = "1.3.7" # A Rust library for parsing, compiling, and executing regular expressions.  
 portaudio = "0.7.0" # PortAudio is a free, cross-platform, open-source, audio I/O library.
 rodio = "0.11.0"
 cpal = "0.11.0" # Low-level cross-platform audio I/O library in pure Rust.

@@ -126,10 +126,11 @@ pub fn list_default_input_device() -> Result<(), anyhow::Error>{
 
     Ok(())
 }
-
+/// Feeds back the audio from the default input device to the output device. 
+/// It is super useful for testing purposes.
 pub fn feedback() -> Result<(), anyhow::Error>{
     let sample_rate: f64 = 44_100.0;
-    let FRAMES: u32 = 2048;
+    let frame_size: u32 = 2048;
     let channels: i32 = 2;
     let interleaved: bool = true;
 
@@ -164,15 +165,11 @@ pub fn feedback() -> Result<(), anyhow::Error>{
     pa.is_duplex_format_supported(input_params, output_params, sample_rate)?;
 
     // Construct the settings with which we'll open our duplex stream.
-    let settings = pa::DuplexStreamSettings::new(input_params, output_params, sample_rate, FRAMES);
+    let settings = pa::DuplexStreamSettings::new(input_params, output_params, sample_rate, frame_size);
 
-    // Once the countdown reaches 0 we'll close the stream.
-    let mut count_down = 3.00;
     let mut user_input = String::new();
+    let mut listening_active = true;
    
-    // We'll use this channel to send the count_down to the main thread for fun.
-    let (sender, receiver) = ::std::sync::mpsc::channel();
-
     // A callback to pass to the non-blocking stream.
     let callback = move |pa::DuplexStreamCallbackArgs {
                              in_buffer,
@@ -182,48 +179,44 @@ pub fn feedback() -> Result<(), anyhow::Error>{
                              ..
                          }| {
 
-        assert!(frames == FRAMES as usize);
-        sender.send(count_down).ok();
-
+        assert!(frames == frame_size as usize);
+       
         // Pass the input straight to the output - BEWARE OF FEEDBACK!
         for (output_sample, input_sample) in out_buffer.iter_mut().zip(in_buffer.iter()) {
             *output_sample = *input_sample;
         }
 
-        if count_down > 0.0 {
+      
             pa::Continue
-        } else {
-            pa::Complete
-        }
+        
     };
 
     // Construct a stream with input and output sample types of f32.
     let mut stream = pa.open_non_blocking_stream(settings, callback)?;
-    println!("Type ''stop'' in order to cancel");
+    println!("Type ''stop'' in order to no longer listen");
     stream.start()?;
 
     // Loop while the non-blocking stream is active.
-   
     while let true = stream.is_active()? {
         // Do some stuff!
-        while let Ok(count_down) = receiver.try_recv() {
-          
-
+     
             io::stdin()
                 .read_line(&mut user_input)
                 .expect("Failed to read input");
 
-            if user_input.trim().matches("stop") {
+            if user_input.trim().contains("stop") {
                 println!("Exiting...");
+             
+                stream.stop()?;
+
             } else {
                 // reset user input 
                 user_input ="".to_string();
+               
             }
          
-        }
+        
     }
-
     stream.stop()?;
-
     Ok(())
 }
