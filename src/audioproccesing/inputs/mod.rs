@@ -3,6 +3,8 @@ use cpal::*;
 use cpal::traits::*;
 use rodio::*;
 use anyhow;
+use std::io;
+use portaudio as pa;
 use ringbuf::RingBuffer;
 /// prints a list of the accepted input formats for the default device
 pub fn list_default_input_formats() {
@@ -26,8 +28,11 @@ pub fn list_hosts(){
 
 //* Prints out the the name of the default output device. 
 pub fn list_default_output_device() -> Result<(), anyhow::Error> {
-    let default_device = rodio::default_output_device().expect("No default output device found.");
-    println!("Default output device: {:?}", default_device.name()?);
+    let pa = pa::PortAudio::new()?;
+    let default_output = pa.default_output_device()?;
+    let output_info = pa.device_info(default_output)?;
+    println!("Default output device info: {:#?}", &output_info);
+
     Ok(())
 }
 
@@ -102,11 +107,116 @@ pub fn enumerate_device_info() -> Result<(), anyhow::Error> {
 
 /// Prints out a list of possible devices found on the current default host 
 pub fn list_available_devices() -> Result<(), anyhow::Error> {
+    
     let devices = rodio::devices()?;
     print!("  Devices: \n");
     for (device_index, device) in devices.enumerate() {
         println!("  {}. \"{}\"", device_index + 1, device.name()?);
     }
 
+    Ok(())
+}
+//* Prints out the default input device found
+pub fn list_default_input_device() -> Result<(), anyhow::Error>{
+    
+    let pa = pa::PortAudio::new()?;
+    let default_input = pa.default_input_device()?;
+    let input_info = pa.device_info(default_input)?;
+    println!("Default input device info: {:#?}", &input_info);
+
+    Ok(())
+}
+/// Feeds back the audio from the default input device to the output device. 
+/// It is super useful for testing purposes.
+pub fn feedback() -> Result<(), anyhow::Error>{
+    let sample_rate: f64 = 44_100.0;
+    let frame_size: u32 = 2048;
+    let channels: i32 = 2;
+    let interleaved: bool = true;
+
+    let pa = pa::PortAudio::new()?;
+
+    println!("PortAudio:");
+    println!("version: {}", pa.version());
+    println!("version text: {:?}", pa.version_text());
+    println!("host count: {}", pa.host_api_count()?);
+
+    // lets get the default host 
+    let default_host = pa.default_host_api()?;
+    println!("default host: {:#?}", pa.host_api_info(default_host));
+
+    // Get the default input device 
+    let def_input = pa.default_input_device()?;
+    let input_info = pa.device_info(def_input)?;
+    println!("Default input device info: {:#?}", &input_info);
+
+    // Construct the input stream parameters.
+    let latency = input_info.default_low_input_latency;
+    let input_params = pa::StreamParameters::<f32>::new(def_input, channels, interleaved, latency);
+  
+    let def_output = pa.default_output_device()?;
+    let output_info = pa.device_info(def_output)?;
+    println!("Default output device info: {:#?}", &output_info);
+
+    // Construct the output stream parameters.
+    let latency = output_info.default_low_output_latency;
+    let output_params = pa::StreamParameters::new(def_output, channels, interleaved, latency);
+    // Check that the stream format is supported.
+    pa.is_duplex_format_supported(input_params, output_params, sample_rate)?;
+
+    // Construct the settings with which we'll open our duplex stream.
+    let settings = pa::DuplexStreamSettings::new(input_params, output_params, sample_rate, frame_size);
+
+    let mut user_input = String::new();
+    let mut listening_active = true;
+   
+    // A callback to pass to the non-blocking stream.
+    let callback = move |pa::DuplexStreamCallbackArgs {
+                             in_buffer,
+                             out_buffer,
+                             frames,
+                             time,
+                             ..
+                         }| {
+
+        assert!(frames == frame_size as usize);
+       
+        // Pass the input straight to the output - BEWARE OF FEEDBACK!
+        for (output_sample, input_sample) in out_buffer.iter_mut().zip(in_buffer.iter()) {
+            *output_sample = *input_sample;
+        }
+
+      
+            pa::Continue
+        
+    };
+
+    // Construct a stream with input and output sample types of f32.
+    let mut stream = pa.open_non_blocking_stream(settings, callback)?;
+    println!("Type ''stop'' in order to no longer listen");
+    stream.start()?;
+
+    // Loop while the non-blocking stream is active.
+    while let true = stream.is_active()? {
+        // Do some stuff!
+     
+            io::stdin()
+                .read_line(&mut user_input)
+                .expect("Failed to read input");
+
+            if user_input.trim().contains("stop") {
+                println!("Exiting...");
+             
+                stream.stop()?;
+
+            } else {
+                // reset user input 
+                user_input ="".to_string();
+               
+            }
+         
+        
+    }
+    stream.stop()?;
     Ok(())
 }
