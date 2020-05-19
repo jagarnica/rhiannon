@@ -5,11 +5,12 @@ mod cli;
 mod audioproccesing;
 use std::env;
 use structopt::StructOpt;
+use cli::Cli as Cli;
 
 fn main() {
     // enumerate all available input formats
     use audioproccesing::inputs as audioproc;
-    use cli::Cli as Cli;
+    
     // audioproccesing::inputs::enumerate_device_info();
     //audioproccesing::inputs::list_default_input_formats();
     //audioproccesing::inputs::list_available_devices();
@@ -21,38 +22,23 @@ fn main() {
     //audioproccesing::inputs::feedback();
     //audioproccesing::inputs::list_available_devices();
 
-
-    match Cli::from_args() {
-        Cli::Start { verbose, opts } => {
-            println!("Still WIP");
-        },
-        Cli::Info { opts } =>{
-            let mut verbose_enabled = false;
-            println!("Options found {:?}", &opts);
-          match (opts,true) {
-              verbose =>{
-                
-                println!("Verbose mode activated");
-                verbose_enabled = true;
-                }
-                
-              
-              all =>{
-                /// List all the device information we have
-                println!("printing out all info...");
-                audioproc::enumerate_device_info();
-              },
-              inputs=>{
-                //  Display the inputs 
-                audioproc::list_available_devices();
-              },
-
-              _ => {}
-          }          
-        }
-
-        _ => (),
-    }
+   
+    let cmds = Cli::from_args();
+    let verbose_enabled = cmds.verbose.unwrap();
+    handle_subcommands(cmds);
     
+}
+fn handle_subcommands(cli: Cli){
+    //println!(" {:?}", cli);
+    match &cli.commands {
+        start =>{
+            match start {
+                port =>{
+                    // println!("Attempting to start... port {:?}", port)
+                }
+            }
+        },
+
+    };
 }
 
