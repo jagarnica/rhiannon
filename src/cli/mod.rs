@@ -6,9 +6,9 @@ use structopt::StructOpt;
 #[structopt(about = "The Fastest Streaming Discord Bot")]
 pub struct Cli {
     #[structopt(short = "v", global = true, long = "verbose")]
-    verbose: bool,
+    pub verbose: bool,
     #[structopt(subcommand)] 
-    commands: Subcommands
+    pub commands: Option<Subcommands>
 }
 #[derive(StructOpt, Debug, PartialEq)]
 pub enum Subcommands {
@@ -20,13 +20,13 @@ pub enum Subcommands {
 #[derive(StructOpt, Debug, PartialEq)]
 pub struct InfoOpts {
     #[structopt(short = "i", long = "inputs")]
-    inputs: bool,
+    pub inputs: bool,
     #[structopt(short = "o", long = "outputs")]
-    outputs: bool,
+    pub outputs: bool,
     #[structopt(short = "d", long = "defaults")]
-    defaults: bool,
+    pub defaults: bool,
     #[structopt(short = "a", long = "all")]
-    all: bool,
+    pub all: bool,
 }
 
 #[derive(StructOpt, Debug, PartialEq)]

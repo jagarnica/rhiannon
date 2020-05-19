@@ -24,21 +24,28 @@ fn main() {
 
    
     let cmds = Cli::from_args();
-    let verbose_enabled = cmds.verbose.unwrap();
-    handle_subcommands(cmds);
+    let verbose_enabled = cmds.verbose;
+    eprintln!("Verbose mode activated? {:?}", verbose_enabled);
+    handle_subcommands(cmds, verbose_enabled);
     
 }
-fn handle_subcommands(cli: Cli){
-    //println!(" {:?}", cli);
-    match &cli.commands {
-        start =>{
-            match start {
-                port =>{
-                    // println!("Attempting to start... port {:?}", port)
-                }
-            }
-        },
+fn handle_subcommands(cli: Cli, verbose: bool){
+    if let Some(subcommand) = cli.commands{
+        match subcommand {
+            cli::Subcommands::Start(cfg) => {
+                println!("handle start:  {:?}", cfg);
+            },
+            cli::Subcommands::Info(cfg)=>{
+                println!("handle info:  {:?}", cfg);
+               match cfg {
+                   all  =>{
+                     
+                   },
+               }
 
-    };
+            }
+           
+        }
+    }
 }
 
