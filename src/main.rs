@@ -5,7 +5,7 @@ mod utils;
 mod audioproccesing;
 use std::env;
 use structopt::StructOpt;
-use utils::cli as CMD;
+use utils::cli as command;
 
 fn main() {
     // enumerate all available input formats
@@ -23,9 +23,9 @@ fn main() {
     //audioproccesing::inputs::list_available_devices();
 
     // First get the arguments
-    //let cmds = CMD::from_args();
+    let commands = command::Cli::from_args();
     // Let cli process the arguments 
-    //cli::parse_args(cmds);
+    command::parse_args(commands);
     
 }
 

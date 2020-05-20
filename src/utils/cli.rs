@@ -21,13 +21,13 @@ pub enum Rhiannon {
 #[derive(StructOpt, Debug, PartialEq)]
 pub struct InfoOpts {
     #[structopt(short = "i", long = "inputs")]
-    inputs: bool,
+    pub inputs: bool,
     #[structopt(short = "o", long = "outputs")]
-    outputs: bool,
+    pub outputs: bool,
     #[structopt(short = "d", long = "defaults")]
-    defaults: bool,
+    pub defaults: bool,
     #[structopt(short = "a", long = "all")]
-    all: bool,
+    pub all: bool,
 }
 
 #[derive(StructOpt, Debug, PartialEq)]
