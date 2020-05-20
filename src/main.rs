@@ -5,7 +5,7 @@ mod cli;
 mod audioproccesing;
 use std::env;
 use structopt::StructOpt;
-use cli::Cli as Cli;
+use cli::Cli as CMD;
 
 fn main() {
     // enumerate all available input formats
@@ -22,30 +22,11 @@ fn main() {
     //audioproccesing::inputs::feedback();
     //audioproccesing::inputs::list_available_devices();
 
-   
-    let cmds = Cli::from_args();
-    let verbose_enabled = cmds.verbose;
-    eprintln!("Verbose mode activated? {:?}", verbose_enabled);
-    handle_subcommands(cmds, verbose_enabled);
+    // First get the arguments
+    let cmds = CMD::from_args();
+    // Let cli process the arguments 
+    cli::parse_args(cmds);
     
 }
-fn handle_subcommands(cli: Cli, verbose: bool){
-    if let Some(subcommand) = cli.commands{
-        match subcommand {
-            cli::Subcommands::Start(cfg) => {
-                println!("handle start:  {:?}", cfg);
-            },
-            cli::Subcommands::Info(cfg)=>{
-                println!("handle info:  {:?}", cfg);
-               match cfg {
-                   all  =>{
-                     
-                   },
-               }
 
-            }
-           
-        }
-    }
-}
 
