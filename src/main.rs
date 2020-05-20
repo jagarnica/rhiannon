@@ -1,11 +1,11 @@
 #![allow(unused)] // don't warn on unused things
 use cpal;
 use cpal::traits::*;
-mod cli;
+mod utils;
 mod audioproccesing;
 use std::env;
 use structopt::StructOpt;
-use cli::Cli as CMD;
+use utils::cli as CMD;
 
 fn main() {
     // enumerate all available input formats
@@ -23,9 +23,9 @@ fn main() {
     //audioproccesing::inputs::list_available_devices();
 
     // First get the arguments
-    let cmds = CMD::from_args();
+    //let cmds = CMD::from_args();
     // Let cli process the arguments 
-    cli::parse_args(cmds);
+    //cli::parse_args(cmds);
     
 }
 

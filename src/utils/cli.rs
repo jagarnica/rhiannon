@@ -1,7 +1,7 @@
 use std::env;
 use structopt::StructOpt;
-mod info;
-mod start;
+use crate::utils::handlers::rh_start as rh_start;
+use crate::utils::handlers::rh_info as rh_info;
 //* This processes the arguements passed from the cli
 #[derive(StructOpt, Debug, PartialEq)]
 #[structopt(about = "The Fastest Streaming Discord Bot")]
@@ -9,10 +9,10 @@ pub struct Cli {
     #[structopt(short = "v", global = true, long = "verbose")]
     verbose: bool,
     #[structopt(subcommand)] 
-    commands: Subcommands
+    commands: Option<Rhiannon>
 }
 #[derive(StructOpt, Debug, PartialEq)]
-pub enum Subcommands {
+pub enum Rhiannon {
     #[structopt(name = "start")]
     Start (StartOpts),
     #[structopt(name = "info")]
@@ -38,30 +38,18 @@ pub struct StartOpts {
 }
 //* Processes all the arguments passed in the from cli
 pub fn parse_args(args: Cli){
-    println!("Args found {:?}", &args);
+    
     let verbose_enabled = args.verbose;
-    match &args {
-        start=> {
-            let opts = args.commands;
-            match opts {
-                start =>{
-                    eprintln!("Opts found {:?}", start::Start)
-                }
-            }
-            //handle_start(verbose_enabled, opts);
-        },
-        info=>{
-
+     // handle subcommands
+     if let Some(subcommand) = args.commands{
+        match subcommand {
+            Rhiannon::Start(cfg) => {
+                rh_start::handle_start(verbose_enabled, cfg);
+            },
+            Rhiannon::Info(cfg) => {
+                rh_info::handle_info(verbose_enabled, cfg);
+            },
         }
     }
-}
-//* handle the info command 
-pub fn handle_info(){
-
-}
-//* handle the start command 
-pub fn handle_start(verbose: bool, args: StartOpts){
-    let verbose_enabled = verbose;
-    
 }
 
