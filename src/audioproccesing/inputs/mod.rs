@@ -43,6 +43,7 @@ pub fn list_default_output_device() -> Result<(), anyhow::Error> {
 }
 
 pub fn enumerate_device_info() -> Result<(), anyhow::Error> {
+    
     println!("Supported hosts:\n  {:?}", cpal::ALL_HOSTS);
     let available_hosts = cpal::available_hosts();
     println!("Available hosts:\n  {:?}", available_hosts);

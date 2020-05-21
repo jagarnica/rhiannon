@@ -52,3 +52,13 @@ pub fn parse_args(args: Cli){
     }
 }
 
+pub fn parse_bool_opts(enum_val: bool) -> bool{
+    match enum_val {
+        true =>{
+           return true;
+        },
+        _ => {
+            return false;
+        }
+    }
+}

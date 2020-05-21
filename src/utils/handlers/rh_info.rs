@@ -1,41 +1,39 @@
 use crate::audioproccesing::inputs as ap;
 use crate::utils::cli::InfoOpts;
+use crate::utils::cli as cli;
 ///* Processes the info command arguments. 
 pub fn handle_info(verbose: bool, opts: InfoOpts){
     let verbose_enabled = verbose;
-    println!("Howdy! here the options found {:?}", &opts);
-    match opts.defaults {
-        true =>{
-            // User wants us to list the defaults 
-            println!("listing defaults... ")
-        }
-        _=> {}
+
+    // User wants us to list defaults for the system 
+    if (opts.defaults) {
+        println!("listing defaults... ")
     }
-    match opts.outputs {
-        true =>{
-            // User wants us to list the outputs 
-            println!("listing outputs...")
-        },
-        _ =>{}
+    // User wants us to list the output devices for the system 
+    if (opts.outputs){
+        println!("listing outputs...")
     }
-    match opts.inputs {
-        true => {
-            println!("User wants use to list the inputs...")
-        },
-        _ =>{}
+    // List all the input devices for the system 
+    if (opts.inputs){
+        println!("listing inputs...")
     }
-    match opts.all  {
-        true => {
-            println!("Printing out all details... ");
-        },
-        _ =>{}
+    // enumerate all the devices on the system 
+    if (opts.all){
+        list_audio_details();
     }
-   
+    
+}
+fn test_func(test_arg: bool){
+    println!("Testing!!!")
 }
 // List the inputs founds for the device 
 fn list_inputs(verbose: bool){
    //* TODO Finish listing inputs 
     println!("Todo...")
+}
+
+fn list_audio_details(){
+    ap::enumerate_device_info();
 }
 
 fn list_defaults(verbose: bool){
