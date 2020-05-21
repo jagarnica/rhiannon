@@ -38,7 +38,6 @@ pub struct StartOpts {
 }
 //* Processes all the arguments passed in the from cli
 pub fn parse_args(args: Cli){
-    
     let verbose_enabled = args.verbose;
      // handle subcommands
      if let Some(subcommand) = args.commands{

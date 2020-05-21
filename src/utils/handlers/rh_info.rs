@@ -3,34 +3,32 @@ use crate::utils::cli::InfoOpts;
 ///* Processes the info command arguments. 
 pub fn handle_info(verbose: bool, opts: InfoOpts){
     let verbose_enabled = verbose;
-    match (&opts) {
-        inputs  =>{
-          match opts.inputs {
-            true =>{
-                println!("listing inputs... ")
-            },
-            _ =>{}
-          }
-        },
-        outputs =>{
-            match opts.outputs {
-                true =>{
-                    println!("listing outputs")
-                },
-                _ =>{},
-            }
-        },
-        defaults =>{
-            match opts.defaults {
-                true =>{
-                    println!("Listing defaults");
-                    list_defaults(verbose_enabled);
-                },
-                _ =>{},
-            }
+    println!("Howdy! here the options found {:?}", &opts);
+    match opts.defaults {
+        true =>{
+            // User wants us to list the defaults 
+            println!("listing defaults... ")
         }
-        _ => (),
-
+        _=> {}
+    }
+    match opts.outputs {
+        true =>{
+            // User wants us to list the outputs 
+            println!("listing outputs...")
+        },
+        _ =>{}
+    }
+    match opts.inputs {
+        true => {
+            println!("User wants use to list the inputs...")
+        },
+        _ =>{}
+    }
+    match opts.all  {
+        true => {
+            println!("Printing out all details... ");
+        },
+        _ =>{}
     }
    
 }
