@@ -11,7 +11,7 @@ fn main() {
     // enumerate all available input formats
     use audioproccesing::inputs as audioproc;
     
-    // audioproccesing::inputs::enumerate_device_info();
+   //  audioproccesing::inputs::enumerate_device_info();
     //audioproccesing::inputs::list_default_input_formats();
     //audioproccesing::inputs::list_available_devices();
     //audioproccesing::inputs::list_default_input_formats();

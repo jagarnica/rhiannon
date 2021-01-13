@@ -23,14 +23,28 @@ pub enum Rhiannon {
 
 #[derive(StructOpt, Debug, PartialEq)]
 pub struct InfoOpts {
-    #[structopt(short = "i", long = "inputs")]
+    #[structopt(short = "h", long = "help")]
+    pub help: bool,
+    #[structopt(short = "i", long = "inputs", about= "List all the inputs detected.")]
     pub inputs: bool,
-    #[structopt(short = "o", long = "outputs")]
+    #[structopt(short = "o", long = "outputs", about = "List all the outputs detected.")]
     pub outputs: bool,
-    #[structopt(short = "d", long = "defaults")]
+    #[structopt(short = "d", long = "defaults", about = "List the default devices selected by PortAudio.")]
     pub defaults: bool,
-    #[structopt(short = "a", long = "all")]
+    #[structopt(short = "a", long = "all", about = "List a long list of info. Useful sometimes for debugging.")]
     pub all: bool,
+
+   
+}
+impl InfoOpts {
+    pub fn empty(&self) -> bool {
+        !self.inputs && !self.outputs && !self.defaults && !self.all &&!self.help
+    }
+    pub fn show_help(&self) {
+        let help_info = "Use \"--inputs\" or \"-i\" to list all the inputs.\nUse \"--outputs\" or \"-o\" to get the outputs found. \nUse \"-defaults\" or \"-d\" to list all the default devices selected by PortAudio. \nUse \"--all\" or \"-a\" to list all the information available. 
+        ";
+        println!("{}",help_info)
+    }
 }
 
 #[derive(StructOpt, Debug, PartialEq)]
